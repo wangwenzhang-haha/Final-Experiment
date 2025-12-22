@@ -1,0 +1,54 @@
+graph:
+  relation_types: ["interaction", "metadata", "commonsense"]
+  align_strategy: "id_map"
+  m_core: 5
+  edge_mask:
+    enabled: true
+    lr: 1e-3
+    epochs: 5
+
+model:
+  backbone: "lightgcn"        # lightgcn | gcn | graphsage
+  embedding_dim: 64
+  lr: 0.001
+  epochs: 20
+  train_batch_size: 512       # 若显存较小可调低到 128-256
+
+path:
+  topk: 3
+  max_hops: 4
+  scoring: "weighted_shortest"  # weighted_shortest | beam_score
+  min_hops: 2
+  min_dims: 2
+
+prompt:
+  atomic_library: "src/prompt/atomic_templates.yaml"
+  control_tokens: ["CONCISE", "FACTUAL"]
+  max_prompt_length: 1024
+
+llm:
+  provider: "openai"           # openai | local
+  api_key_env: "OPENAI_API_KEY"
+  device: "cuda"
+  gpu_device: 0
+  lora:
+    enabled: false             # 本机 4070Ti: 若启用 LoRA，请确保 4-bit quantization & offload
+    rank: 8
+    alpha: 16
+    dropout: 0.1
+    target_modules: ["q_proj", "v_proj"]
+    quantize:
+      enabled: true
+      bits: 4
+    gradient_checkpointing: true
+    offload_to_cpu: true
+
+eval:
+  reco_metrics: ["Recall@20", "Coverage"]
+  explain_metrics: ["BERTScore", "BLEURT"]
+  num_workers: 4
+
+run:
+  seed: 42
+  device: "cuda"               # or "cpu"
+  num_threads: 8

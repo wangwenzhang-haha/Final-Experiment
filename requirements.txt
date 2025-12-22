@@ -1,12 +1,32 @@
-torch>=2.0.0
-transformers>=4.32.0
-accelerate>=0.21.0
+# 核心
+torch>=2.1.0
+transformers>=4.40.0
+accelerate>=0.23.0
+datasets>=2.10.0
+sentencepiece
+tokenizers
+
+# PEFT / LoRA / quant
 bitsandbytes>=0.39.0
-peft>=0.4.0
-datasets
-sentence-transformers
-faiss-cpu
-safetensors
-evaluate
-jsonlines
+peft>=0.5.0
+
+# 图 & ML
+networkx
+pandas
+numpy
+scipy
+scikit-learn
 tqdm
+pyyaml
+
+# 评估
+bert-score
+bleurt
+
+# LLM 使用（可选）
+openai
+
+# 工具
+protobuf
+uvicorn
+fastapi  # 若做服务化
