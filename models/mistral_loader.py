@@ -14,7 +14,7 @@ class MistralLLM:
         )
 
         print("🚀 正在加载模型，请稍等...")
-        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=False)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
             quantization_config=bnb_config,

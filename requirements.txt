@@ -1,17 +1,12 @@
-# 项目: explainrec - 多维可解释推荐实验框架
-# 文件: requirements.txt
-# 描述: Anaconda 环境中安装以下依赖以运行完整实验（含本地LLM）
-
-transformers==4.36.2
-accelerate==0.25.0
-torch>=2.0
-sentencepiece
-peft==0.6.2
-bitsandbytes==0.41.1
-scikit-learn
-pandas
-numpy
+torch>=2.0.0
+transformers>=4.32.0
+accelerate>=0.21.0
+bitsandbytes>=0.39.0
+peft>=0.4.0
+datasets
+sentence-transformers
+faiss-cpu
+safetensors
+evaluate
+jsonlines
 tqdm
-networkx
-yaml
-jupyter
