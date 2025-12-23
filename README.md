@@ -49,19 +49,24 @@
    source .venv/bin/activate   # Windows: .venv\Scripts\activate
    pip install -r requirements.txt
 
-2) 准备或生成示例数据（交互、元数据、常识 KG）
+2) 运行玩具级端到端 Demo（包含数据生成 -> 图构建 -> 推荐 -> 证据检索 -> 解释输出）
+   bash scripts/run_toy_pipeline.sh
+   # 等价：python scripts/run_demo.py --dataset toy --k 10 --explain --config configs/demo.yaml
+   # 产物：outputs/demo_results.jsonl，单行 JSON 满足输出 schema，包含推荐列表、用户画像摘要、图路径、元数据与解释
+
+3) 准备或生成示例数据（交互、元数据、常识 KG）
    - data/raw/interactions.csv
    - data/raw/items.csv
    - data/raw/commonsense_edges.csv
    或使用仓库中的 toy 数据脚本（若有）
 
-3) 预处理并构建融合图
+4) 预处理并构建融合图
    python scripts/preprocess.py --raw_dir data/raw --out data/processed/fused_graph.pkl
 
-4) 训练推荐模型（示例）
+5) 训练推荐模型（示例）
    python scripts/train_reco.py --config config/default.yaml --save_dir outputs/checkpoints/reco/
 
-5) （可选）学习 edge-mask 与剪枝，抽取 Top-K 多跳路径，构建 prompts，生成解释并评估
+6) （可选）学习 edge-mask 与剪枝，抽取 Top-K 多跳路径，构建 prompts，生成解释并评估
    - python scripts/learn_edge_mask.py ...
    - python scripts/extract_paths.py ...
    - python scripts/build_prompts.py ...
