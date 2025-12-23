@@ -1,0 +1,18 @@
+{
+  "dataset": {
+    "raw_dir": "data/raw",
+    "fused_graph": "data/processed/fused_graph.pkl",
+    "out_path": "outputs/demo_results.jsonl"
+  },
+  "pipeline": {
+    "topk": 10,
+    "max_hops": 4
+  },
+  "retrieval": {
+    "similar_topn": 3
+  },
+  "llm": {
+    "model": "gpt-3.5-turbo",
+    "temperature": 0.2
+  }
+}

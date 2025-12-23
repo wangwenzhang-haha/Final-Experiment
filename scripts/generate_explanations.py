@@ -1,0 +1,1 @@
+"""Placeholder script for batch explanation generation (to be extended)."""
