@@ -30,14 +30,14 @@ class ExplanationGenerator:
         meta_texts = [f"{m['attr']}={m['value']}" for m in evidence.get("metadata", [])]
         path_texts = [" -> ".join(p.get("nodes", [])) for p in evidence.get("kg_paths", [])]
         reasoning = [
-            f"User {user_id} previously interacted with {', '.join(interactions)}" if interactions else "Limited interaction history available.",
-            f"Candidate item shares attributes: {', '.join(meta_texts)}" if meta_texts else "Metadata similarity not available.",
-            f"Graph paths considered: {', '.join(path_texts)}" if path_texts else "No graph paths found.",
+            f"用户 {user_id} 曾经交互过：{', '.join(interactions)}" if interactions else "交互记录较少。",
+            f"候选物品的相关属性：{', '.join(meta_texts)}" if meta_texts else "缺少可用的元数据相似度。",
+            f"参考的图路径：{', '.join(path_texts)}" if path_texts else "未找到可用的图路径。",
         ]
         short = (
-            f"Because you liked {', '.join(interactions[:2])}, item {item_id} matches similar attributes."
+            f"因为你喜欢 {', '.join(interactions[:2])}，物品 {item_id} 的相关属性相似。"
             if interactions
-            else f"Item {item_id} is suggested based on popularity."
+            else f"物品 {item_id} 基于流行度被推荐。"
         )
         detailed = " ".join(reasoning)
         return Explanation(short=short, detailed=detailed, reasoning_steps=reasoning)

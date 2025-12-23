@@ -107,10 +107,10 @@ class UserGoalInferer:
         top_brands = [br for br, _ in brands.most_common(2)]
         summary_bits = []
         if top_categories:
-            summary_bits.append(f"prefers categories: {', '.join(top_categories)}")
+            summary_bits.append(f"偏好品类：{', '.join(top_categories)}")
         if top_brands:
-            summary_bits.append(f"often chooses brands: {', '.join(top_brands)}")
-        summary_text = "; ".join(summary_bits) if summary_bits else "sparse history"
+            summary_bits.append(f"常选品牌：{', '.join(top_brands)}")
+        summary_text = "；".join(summary_bits) if summary_bits else "历史行为较少"
         return {
             "top_categories": top_categories,
             "top_brands": top_brands,
