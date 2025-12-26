@@ -75,7 +75,11 @@ class ExplanationGenerator:
                 ],
                 temperature=self.temperature,
             )
-            text = response.choices[0].message["content"]  # type: ignore
+            message = response.choices[0].message
+            if hasattr(message, "content"):
+                text = message.content
+            else:
+                text = message["content"]  # type: ignore[index]
             parsed = json.loads(text)
             if not isinstance(parsed, dict):
                 raise ValueError("LLM 返回的不是 JSON 对象")
