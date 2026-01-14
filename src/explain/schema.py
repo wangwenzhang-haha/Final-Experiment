@@ -63,7 +63,11 @@ EXPLANATION_JSON_GUIDE = {
         "interactions": [{"user_id": "string", "item_id": "string"}],
         "metadata": [{"entity": "string", "attr": "string", "value": "string"}],
         "kg_paths": [
-            {"nodes": ["..."], "edges": ["..."], "confidence": 0.0}
+            {
+                "nodes": ["..."],
+                "edges": [{"src": "...", "dst": "...", "relation": "..."}],
+                "score": 0.0,
+            }
         ],
     },
     "explanation": {

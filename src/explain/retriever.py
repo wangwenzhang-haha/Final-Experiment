@@ -74,34 +74,68 @@ class GraphEvidenceFinder:
     def __init__(self, graph: SimpleGraph):
         self.graph = graph
 
+    @staticmethod
+    def is_valid_edge(src: str, dst: str, relation: str) -> bool:
+        """Filter out low-quality relations during traversal."""
+        blocked_relations = {"related_to", "unknown", "noise"}
+        return relation not in blocked_relations
+
+    @staticmethod
+    def score_path(path: Dict[str, List[Dict[str, str]]]) -> float:
+        """Score a path using relation weights and path length."""
+        edge_scores: List[float] = []
+        for edge in path.get("edges", []):
+            rel = edge.get("relation", "")
+            rel_weight = {
+                "interacts_with": 1.0,
+                "has_brand": 1.2,
+                "has_category": 1.0,
+                "similar_to": 0.7,
+                "related_to": 0.3,
+                "cs_related": 0.4,
+            }.get(rel, 0.5)
+            edge_scores.append(rel_weight)
+        if not edge_scores:
+            return 0.0
+        length_score = 1.0 / max(len(path.get("nodes", [])), 1)
+        return length_score * (sum(edge_scores) / len(edge_scores))
+
     def find_paths(self, user_id: str, item_id: str, max_hops: int = 4, limit: int = 2):
         """Return up to `limit` simple paths within the hop cutoff."""
         user_node = f"user:{user_id}"
         item_node = f"item:{item_id}"
         if not (self.graph.has_node(user_node) and self.graph.has_node(item_node)):
             return []
-        paths = self.graph.all_simple_paths(user_node, item_node, cutoff=max_hops)
-        results = []
-        for path in paths:
-            edges: List[str] = []
-            nodes: List[str] = []
-            for idx in range(len(path) - 1):
-                a, b = path[idx], path[idx + 1]
-                attrs = self.graph.get_edge_attrs(a, b)
+        max_paths = 50
+        collected: List[Dict[str, List[Dict[str, str]]]] = []
+
+        def dfs(current: str, depth: int, visited: List[str], edges: List[Dict[str, str]]):
+            if depth > max_hops or len(collected) >= max_paths:
+                return
+            if current == item_node:
+                collected.append({"nodes": list(visited), "edges": list(edges)})
+                return
+            for edge in self.graph.neighbors(current):
+                nxt = edge.target
+                if nxt in visited:
+                    continue
+                attrs = edge.attrs or {}
                 relation = attrs.get("relation") or attrs.get("type") or "related_to"
-                edges.append(relation)
-                nodes.append(a)
-            nodes.append(path[-1])
-            results.append(
-                {
-                    "nodes": nodes,
-                    "edges": edges,
-                    "confidence": 1.0 / (len(nodes) or 1),
-                }
-            )
-            if len(results) >= limit:
-                break
-        return results
+                if not self.is_valid_edge(current, nxt, relation):
+                    continue
+                visited.append(nxt)
+                edges.append({"src": current, "dst": nxt, "relation": relation})
+                dfs(nxt, depth + 1, visited, edges)
+                edges.pop()
+                visited.pop()
+
+        dfs(user_node, 0, [user_node], [])
+
+        scored = []
+        for path in collected:
+            scored.append({**path, "score": self.score_path(path)})
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        return scored[:limit]
 
 
 __all__ = ["VectorEvidenceRetriever", "GraphEvidenceFinder"]
