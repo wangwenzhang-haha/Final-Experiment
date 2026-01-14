@@ -26,7 +26,7 @@ from src.explain import (
     build_explanation_prompt,
 )
 from src.pipeline.simple_graph import SimpleGraph
-from scripts.preprocess import build_fused_graph
+from src.graph.build_fused_graph import build_fused_graph
 
 
 def _read_csv(path: Path) -> List[Dict[str, str]]:
